@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  redis:
+    image: "redis:5.0.4-stretch"
+    volumes:
+      - "redis:/data"
+    networks:
+      - access_testr_network
+
+  db:
+    image: postgres:12
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    env_file:
+      - .db.env
+    networks:
+      - access_testr_network
+
+  migrate:
+    build: .
+    command: python manage.py migrate --noinput
+    env_file:
+      - .app.env
+    volumes:
+      - .:/app
+    networks:
+      - access_testr_network
+    depends_on:
+      - db
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - migrate
+    env_file:
+      - .app.env
+    networks:
+      - access_testr_network
+  worker:
+    build: .
+    command: python -m celery -A accessTestr  worker
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - migrate
+    env_file:
+      - .app.env
+    networks:
+      - access_testr_network
+  flower:
+    build: .
+    command: python -m celery -A accessTestr  flower
+    volumes:
+      - .:/app
+    ports:
+      - "5555:5555"
+    depends_on:
+      - db
+      - migrate
+    env_file:
+      - .app.env
+    networks:
+      - access_testr_network
+volumes:
+  postgres_data:
+  redis: {}
+
+networks:
+  access_testr_network:

@@ -1,0 +1,6 @@
+/uploads/*
+/venv/
+.idea
+.app.env
+.db.env
+

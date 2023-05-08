@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Check: {{ url_check_obj.id }}</h2>
+
+    <code>
+        {{ url_check_obj.url }}
+    </code>
+
+    <div class="page-header"><h3>Tests</h3></div>
+
+    <div class="row">
+        {% for test in url_check_obj.tests.all %}
+            <div class="col-sm-6">
+                <div class="panel
+                {% if test.status == "COMPLETED" %}
+                    {% if test.result %}
+                        panel-success
+                    {% else %}
+                        panel-danger
+                    {% endif %}
+                {% else %}
+                panel-default
+                {% endif %}
+                "
+                >
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ test.test_type }} | {{ test.status }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            <h5>Result</h5>
+                            {{ test.result }}
+                        </div>
+                        <div>
+                            <h5>Details</h5>
+                            <div class="well">
+                                {{ test.details }}
+                            </div>
+
+                        </div>
+
+
+                        {% if test.proof_image %}
+                            <div>
+                                <h5></h5>
+                            </div>
+                            <!-- Large modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#myModal">View Screenshot
+                            </button>
+
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="myLargeModalLabel">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <h5>Webpage Screenshot</h5>
+                                        <div>
+                                            <img class="img-rounded" src="/media/{{ test.id }}.png">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            {#                            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>#}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
