@@ -31,6 +31,15 @@ class ViewListUrlCheck(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class ViewSpecficUrlCheck(APIView):
+    """View to a single Url Checks and it's tests"""
+    serializer_class = UrlCheckSerializer
+
+    def get(self, request, pk):
+        checks = UrlCheck.objects.get(pk=pk)
+        serializer = UrlCheckSerializer(checks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 def home(request):
     if request.method == 'POST':

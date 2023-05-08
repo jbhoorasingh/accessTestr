@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import UrlCheck, Test
 
+
 class CreateUrlCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = UrlCheck
